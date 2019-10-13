@@ -13,7 +13,7 @@ namespace Mono_VsCode.Objects
 
         private int shotCooldown = 0;
 
-        private int health = 5;
+        public int Health { get; private set; } = 5;
 
         private SoundEffect shotSound;
         private SoundEffect destroySound;
@@ -46,9 +46,9 @@ namespace Mono_VsCode.Objects
         public void Damage(int damage)
         {
             damageSound.Play();
-            health -= damage;
+            Health -= damage;
 
-            if (health <= 0)
+            if (Health <= 0)
                 Kill = true;
         }
 

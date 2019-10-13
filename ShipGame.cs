@@ -49,6 +49,8 @@ namespace Mono_VsCode
             renderTarget = new RenderTarget2D(GraphicsDevice, 320, 240);
 
             InitializeGameObjects();
+
+            gameManager.Initialize();
         }
 
         private void InitializeGameObjects()
@@ -56,6 +58,7 @@ namespace Mono_VsCode
             GameManager.AddGameObject(new Background());
             GameManager.AddGameObject(new PlayerShip()
             {
+                Name = "Player",
                 PosX = 160,
                 PosY = 210,
             });

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Mono_VsCode.Objects;
 
 namespace Mono_VsCode.Core
 {
@@ -14,6 +15,11 @@ namespace Mono_VsCode.Core
         private List<CollidableObject> collidables = new List<CollidableObject>();
 
         public Random RNG = new Random(System.DateTime.Now.Millisecond);
+
+        public int Score { get; set; }
+        public bool IsGameOver { get; private set; }
+
+        private GameHud Hud;
 
         protected GameManager()
         {
@@ -32,7 +38,7 @@ namespace Mono_VsCode.Core
 
         public void Initialize()
         {
-
+            Hud = new GameHud();
         }
 
         public void Update(GameTime gameTime)
@@ -50,26 +56,31 @@ namespace Mono_VsCode.Core
                     collidables[c1].TryCollide(collidables[c2]);
                 }
             }
+
+            Hud.Update();
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             gameObjects.ForEach(x => x.Draw(spriteBatch));
+
+            Hud.Draw(spriteBatch);
         }
 
-        public T FindObject<T>(string name) where T : GameObject
+        public static T FindObject<T>(string name) where T : GameObject
         {
-            return gameObjects.SingleOrDefault(x => x.Name == name) as T;
+            return Self.gameObjects.SingleOrDefault(x => x.Name == name) as T;
         }
 
-        public GameObject FindObject(string name)
+        public static GameObject FindObject(string name)
         {
-            return gameObjects.SingleOrDefault(x => x.Name == name);
+            return Self.gameObjects.SingleOrDefault(x => x.Name == name);
         }
 
         public void StopGame()
         {
             FindObject("WaveGenerator").Kill = true;
+            IsGameOver = true;
         }
 
         #region Static Methods

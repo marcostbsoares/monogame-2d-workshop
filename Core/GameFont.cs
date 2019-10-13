@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Cyotek.Drawing.BitmapFont;
+﻿using Cyotek.Drawing.BitmapFont;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -30,6 +27,14 @@ namespace Mono_VsCode.Core
                 spriteBatch.Draw(fontTexture, destRectangle, srcRectangle, color);
                 drawPosition.X += bitmapFont[c].XAdvance;
             }
+        }
+
+        public void DrawStringCentered(string str, Vector2 position, SpriteBatch spriteBatch, Color color)
+        {
+            var measureString = bitmapFont.MeasureFont(str);
+            var drawPosition = new Vector2(position.X - measureString.Width / 2, position.Y - measureString.Height / 2);
+
+            DrawString(str, drawPosition, spriteBatch, color);
         }
     }
 }

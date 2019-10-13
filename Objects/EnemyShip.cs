@@ -60,6 +60,7 @@ namespace Mono_VsCode.Objects
         protected override void OnDestroy()
         {
             destroySound.Play();
+            GameManager.Self.Score += 100;
         }
 
         public void Damage(int damage)
