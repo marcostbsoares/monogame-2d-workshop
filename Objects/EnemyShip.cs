@@ -8,34 +8,43 @@ namespace Mono_VsCode.Objects
 {
     public class EnemyShip : CollidableObject
     {
-        private int movementCounter = -60;
         private int health = 3;
-        private int shotCounter;
+
+        private int shotCounter = 0;
         private int damageFlashCounter = 0;
-        private int targetY;
+
+        private readonly WaveGenerator waveGenerator;
 
         private SoundEffect destroySound;
         private SoundEffect damageSound;
 
-        public EnemyShip(int targetY) : base(16, 16, ShipGame.Self.Content.Load<Texture2D>("textures/enemy_ship"))
+        private Vector2 basePosition;
+
+        private const int minShotTime = 240;
+        private const int maxShotTime = 480;
+
+        public EnemyShip(Vector2 basePosition, int health, WaveGenerator waveGenerator) : base(16, 16, ShipGame.Self.Content.Load<Texture2D>("textures/enemy_ship"))
         {
             destroySound = ShipGame.Self.Content.Load<SoundEffect>("Sounds/boom");
             damageSound = ShipGame.Self.Content.Load<SoundEffect>("Sounds/hurt2");
 
-            shotCounter = GameManager.Self.RNG.Next(60, 180);
-            this.targetY = targetY;
+            shotCounter = GameManager.Self.RNG.Next(minShotTime, maxShotTime);
+
+            this.health = health;
+            this.basePosition = basePosition;
+            this.Position = new Vector2(GameManager.Self.RNG.Next(0, 320), -20);
+            this.waveGenerator = waveGenerator;
         }
 
         public override void Update(GameTime gameTime)
         {
-            if (PosY < targetY)
+            if (GameManager.Self.IsGameOver)
+                return;
+
+            if (PosY < basePosition.Y)
                 PosY++;
 
-            if (movementCounter >= 60)
-                movementCounter *= -1;
-
-            movementCounter++;
-            PosX += 1 * Math.Sign(movementCounter);
+            PosX = basePosition.X + waveGenerator.GlobalXOffset;
 
             if (shotCounter > 0)
                 shotCounter--;
@@ -54,7 +63,7 @@ namespace Mono_VsCode.Objects
                 PosY = this.PosY + 8,
             });
 
-            shotCounter = GameManager.Self.RNG.Next(60, 180);
+            shotCounter = GameManager.Self.RNG.Next(minShotTime, maxShotTime);
         }
 
         protected override void OnDestroy()

@@ -77,6 +77,11 @@ namespace Mono_VsCode.Core
             return Self.gameObjects.SingleOrDefault(x => x.Name == name);
         }
 
+        public static int CountObjects<T>() where T : GameObject
+        {
+            return Self.gameObjects.Count(x => x is T);
+        }
+
         public void StopGame()
         {
             FindObject("WaveGenerator").Kill = true;

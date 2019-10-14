@@ -10,7 +10,7 @@ namespace Mono_VsCode.Core
 
         public string Name;
 
-        public Vector2 Position { get; private set; }
+        public Vector2 Position { get; set; }
         public float PosX
         {
             get { return Position.X; }
