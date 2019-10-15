@@ -34,10 +34,63 @@ namespace Mono_VsCode
         {
             base.Initialize();
 
-            Pixel = Content.Load<Texture2D>("textures/pixel");
-
             gameManager = GameManager.Create();
 
+            ConfigureGameScreen();
+
+            InitializeGameObjects();
+
+            gameManager.Initialize();
+        }
+
+        protected override void LoadContent()
+        {
+            spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            Pixel = Content.Load<Texture2D>("textures/pixel");
+        }
+
+        protected override void Update(GameTime gameTime)
+        {
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                Exit();
+
+            gameManager.Update(gameTime);
+
+            base.Update(gameTime);
+        }
+
+        protected override void Draw(GameTime gameTime)
+        {
+            DrawGameScreen();
+            DrawGraphics();
+
+            base.Draw(gameTime);
+        }
+
+        private void DrawGameScreen()
+        {
+            GraphicsDevice.SetRenderTarget(renderTarget);
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+
+            spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+            gameManager.Draw(spriteBatch);
+            spriteBatch.End();
+
+            GraphicsDevice.SetRenderTarget(null);
+        }
+
+        private void DrawGraphics()
+        {
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+
+            spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+            spriteBatch.Draw(renderTarget, DrawArea, null, Color.White);
+            spriteBatch.End();
+        }
+
+        private void ConfigureGameScreen()
+        {
             graphics.PreferredBackBufferWidth = 640;
             graphics.PreferredBackBufferHeight = 480;
 
@@ -47,10 +100,6 @@ namespace Mono_VsCode
             graphics.ApplyChanges();
 
             renderTarget = new RenderTarget2D(GraphicsDevice, 320, 240);
-
-            InitializeGameObjects();
-
-            gameManager.Initialize();
         }
 
         private void InitializeGameObjects()
@@ -66,39 +115,5 @@ namespace Mono_VsCode
             GameManager.AddGameObject(new WaveGenerator() { Name = "WaveGenerator" });
         }
 
-        protected override void LoadContent()
-        {
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-        }
-
-        protected override void Update(GameTime gameTime)
-        {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-
-            gameManager.Update(gameTime);
-
-            base.Update(gameTime);
-        }
-
-        protected override void Draw(GameTime gameTime)
-        {
-            GraphicsDevice.SetRenderTarget(renderTarget);
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-            gameManager.Draw(spriteBatch);
-            spriteBatch.End();
-
-            GraphicsDevice.SetRenderTarget(null);
-
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-            spriteBatch.Draw(renderTarget, DrawArea, null, Color.White);
-            spriteBatch.End();
-
-            base.Draw(gameTime);
-        }
     }
 }

@@ -31,6 +31,13 @@ namespace Mono_VsCode.Objects
             if (shotCooldown > 0)
                 shotCooldown--;
 
+            HandleInput();
+
+            PosX = MathHelper.Clamp(PosX, 0, 320);
+        }
+
+        private void HandleInput()
+        {
             if (Keyboard.GetState().IsKeyDown(Keys.Left))
                 PosX -= movementSpeed;
 
@@ -39,8 +46,6 @@ namespace Mono_VsCode.Objects
 
             if (Keyboard.GetState().IsKeyDown(Keys.Up) && shotCooldown == 0)
                 CreateShot();
-
-            PosX = MathHelper.Clamp(PosX, 0, 320);
         }
 
         public void Damage(int damage)
