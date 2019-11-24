@@ -12,7 +12,7 @@ namespace Mono_VsCode.Core
         public GameFont(string path)
         {
             bitmapFont = BitmapFontLoader.LoadFontFromTextFile("./Content/" + path + ".fnt");
-            fontTexture = ShipGame.Self.Content.Load<Texture2D>(path + "_0");
+            //fontTexture = ShipGame.Self.Content.Load<Texture2D>(path + "_0");
         }
 
         public void DrawString(string str, Vector2 position, SpriteBatch spriteBatch, Color color)
