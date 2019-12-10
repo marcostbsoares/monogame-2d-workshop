@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Mono_VsCode.Core;
 using Mono_VsCode.Objects;
 
 namespace Mono_VsCode
@@ -10,12 +11,11 @@ namespace Mono_VsCode
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-
-        Texture2D background;
+        RenderTarget2D internalScreen; 
 
         public static ShipGame Self;
 
-        Ship ship;
+        GameManager gameManager;
 
         public ShipGame()
         {
@@ -29,17 +29,24 @@ namespace Mono_VsCode
         {
             base.Initialize();
 
+            internalScreen = new RenderTarget2D(this.GraphicsDevice, 320, 240);
+
             graphics.PreferredBackBufferWidth = 640;
             graphics.PreferredBackBufferHeight = 480;
             graphics.ApplyChanges();
 
-            ship = new Ship(new Vector2(320, 400));
+            gameManager = new GameManager();
+
+            var bg = new GameObject(Content.Load<Texture2D>("Textures/background"));
+            gameManager.AddGameObject(bg);
+
+            var ship = new Ship(new Vector2(160, 200));
+            gameManager.AddGameObject(ship);
         }
 
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            background = Content.Load<Texture2D>("Textures/background");
         }
 
         protected override void Update(GameTime gameTime)
@@ -47,7 +54,7 @@ namespace Mono_VsCode
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            ship.Update(gameTime);
+            gameManager.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -56,17 +63,34 @@ namespace Mono_VsCode
         {
             base.Draw(gameTime);
 
+            DrawInternal();
+            DrawScreen();
+        }
+
+        protected void DrawInternal()
+        {
+            GraphicsDevice.SetRenderTarget(internalScreen);
+
             GraphicsDevice.Clear(Color.CornflowerBlue);
             
             spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
-            spriteBatch.Draw(background, Vector2.Zero, null, Color.White);
-
-            ship.Draw(spriteBatch);
+            gameManager.Draw(spriteBatch);
             
             spriteBatch.End();
         }
 
+        protected void DrawScreen()
+        {
+            GraphicsDevice.SetRenderTarget(null);
 
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+
+            spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+
+            spriteBatch.Draw(internalScreen, GraphicsDevice.Viewport.Bounds, Color.White);
+
+            spriteBatch.End();
+        }
     }
 }
